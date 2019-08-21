@@ -1,16 +1,18 @@
+#include "Defs.hpp"
 #include "Display.hpp"
 #include "Movement.hpp"
 
-void test()
-{
-    for (int i = 0; i < 32; i++) {
-        HexToLED(i);
-    }
-}
+LEDMatrix* p;
 
 void init()
 {
-    LEDMatrix p {1,2,3,4,5,6};
+    LEDMatrix p = {
+        LED_PIN_1,
+        LED_PIN_2,
+        LED_PIN_3,
+        LED_PIN_4,
+        LED_PIN_5
+    };
 }
 
 void loop()

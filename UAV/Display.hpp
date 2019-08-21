@@ -16,6 +16,4 @@ class LEDMatrix
     
 };
 
-void HexToLED(int integer);
-
 #endif // DISPLAY_H
