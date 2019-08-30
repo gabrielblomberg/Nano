@@ -1,30 +1,71 @@
-#include <Arduino>
+#include "Display.hpp"
 
-LEDMatrix::LEDMatrix(pin *pins)
-    : m_pins(led_pins)
+#include <Arduino.h>
+
+Display::Display()
 {
-    for (pin p : pins) {
-        PinMode(p, OUTPUT);
+    for (pin p : m_display_pins) {
+        pinMode(p, OUTPUT);
     }
 }
 
-void LEDMatrix::HexToLED(int integer)
+void Display::DisplayInt(int integer)
 {
     static bool forwards = true;
-    static int bits = 5;
 
-    // for (int b = 0; b < bits; b++) {
-    //     digitalWrite((integer >> b) & 1));
-    // }
-
-    if (forwards) { // Get the bits from MSB to LSB
-        for (int bit_mask = bits - 1; bit_mask >= 0; bit_mask--) {
-            digitalWrite((integer & (1 << bit_mask)) >> bit_mask);
+    if (forwards) {
+        for (int i = 0; i < m_display_pin_count; i++) {
+            int state = (integer >> i) & 1 ? HIGH : LOW;
+            digitalWrite(m_display_pins[i], state);
         }
     }
-    else { // Get the bits from LSB to MSB
-        for (int bit_mask = 0; bit_mask < bits; bit_mask++) {
-            digitalWrite((integer & (1 << bit_mask)) >> bit_mask);
+    else {
+        for (int i = m_display_pin_count; i >= 0; i--) {
+            int state = (integer >> i) & 1 ? HIGH : LOW;
+            digitalWrite(m_display_pins[i], state);
         }
+    }
+
+}
+
+void Display::Train()
+{
+    static int delay_ms = 100;
+
+    // Set the first LED to HIGH
+    digitalWrite(m_display_pins[0], HIGH);
+    delay(delay_ms);
+
+    // Set the next LED HIGH and the one before it LOW until last led is HIGH
+    for (int i = 1; i < m_display_pin_count; i++) {
+        digitalWrite(m_display_pins[i], HIGH);
+        digitalWrite(m_display_pins[i - 1], LOW);
+        delay(delay_ms);
+    }
+
+    // Let the train "run off the end" and come back
+    digitalWrite(m_display_pins[ m_display_pin_count], LOW);
+    delay(delay_ms);
+    digitalWrite(m_display_pins[ m_display_pin_count], HIGH);
+    delay(delay_ms);
+
+    // Starting from the end, set the led before HIGH and the current LED to LOW
+    // until only the first LED is HIGH
+    for (int i = m_display_pin_count; i >= 1; i--) {
+        digitalWrite(m_display_pins[i - 1], HIGH);
+        digitalWrite(m_display_pins[i], LOW);
+        delay(delay_ms);
+    }
+
+    // Set the last LED to LOW
+    digitalWrite(m_display_pins[0], LOW);
+}
+
+void Display::DebugFlash(int n, int ms) {
+    for (int i = 0; i < n; i++) {
+        digitalWrite(m_debug_pin, HIGH);
+        delay(ms);
+        digitalWrite(m_debug_pin, LOW);
+        delay(ms);
     }
 }
