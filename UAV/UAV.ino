@@ -17,6 +17,10 @@ void loop()
     // int duration = (end_time - start_time)/1000;
     
     // display.DisplayInt(duration);
-
-    display.DisplayInt(10);
+    while (1) {
+      for (int i = 0; i < 32; i++) {
+        display.DisplayInt(i);
+        delay(100);
+      }
+    }
 }

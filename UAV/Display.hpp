@@ -4,12 +4,12 @@
 #include "defs.hpp"
 
 // Pin definitions
-#define LED_P0 0
-#define LED_P1 1
-#define LED_P2 2
-#define LED_P3 3
-#define LED_P4 4
-#define LED_P5 5
+#define LED_P0 2
+#define LED_P1 3
+#define LED_P2 4
+#define LED_P3 5
+#define LED_P4 6
+#define LED_P5 7
 
 class Display
 {

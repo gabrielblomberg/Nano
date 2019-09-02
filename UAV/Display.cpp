@@ -30,11 +30,10 @@ void Display::DisplayInt(int integer)
 
 void Display::Train()
 {
-    static int delay_ms = 100;
+    static int delay_ms = 50;
 
     // Set the first LED to HIGH
-    digitalWrite(m_display_pins[0], HIGH);
-    delay(delay_ms);
+     digitalWrite(m_display_pins[0], HIGH);
 
     // Set the next LED HIGH and the one before it LOW until last led is HIGH
     for (int i = 1; i < m_display_pin_count; i++) {
@@ -42,13 +41,7 @@ void Display::Train()
         digitalWrite(m_display_pins[i - 1], LOW);
         delay(delay_ms);
     }
-
-    // Let the train "run off the end" and come back
-    digitalWrite(m_display_pins[ m_display_pin_count], LOW);
-    delay(delay_ms);
-    digitalWrite(m_display_pins[ m_display_pin_count], HIGH);
-    delay(delay_ms);
-
+    
     // Starting from the end, set the led before HIGH and the current LED to LOW
     // until only the first LED is HIGH
     for (int i = m_display_pin_count; i >= 1; i--) {
@@ -59,6 +52,8 @@ void Display::Train()
 
     // Set the last LED to LOW
     digitalWrite(m_display_pins[0], LOW);
+
+    DebugFlash(10, 50);
 }
 
 void Display::DebugFlash(int n, int ms) {
