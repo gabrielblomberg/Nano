@@ -6,7 +6,6 @@
 Accelerometer::Accelerometer()
     : m_mpu(MPU6050())
     , m_magnitude_offset(0)
-    , m_magnitude_limit(10000) // Tried and tested
 {
     m_mpu.initialize();
     if (!m_mpu.testConnection()) {
@@ -42,18 +41,4 @@ int Accelerometer::Magnitude()
     AccelerationalData data = Query();
     int mag = sqrt( pow(data.ax, 2) + pow(data.ay, 2) + pow(data.az, 2));
     return  mag - m_magnitude_offset;
-}
-
-bool Accelerometer::Test()
-{
-    bool pinged = m_mpu.testConnection();
-    DEBUG_PRINT("Accerometer Pinged: ");
-    DEBUG_PRINT( pinged ? "True" : "False");
-    DEBUG_PRINTLN();
-
-    DEBUG_PRINT("Accelerometer Offset: ");
-    DEBUG_PRINT(m_magnitude_limit);
-    DEBUG_PRINTLN();
-
-    return pinged;
 }

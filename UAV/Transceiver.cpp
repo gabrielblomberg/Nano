@@ -28,8 +28,3 @@ void Transceiver::PushAcceleration(const AccelerationalData& data)
         DEBUG_PRINTLN();
     }
 }
-
-void Transceiver::Test()
-{
-    
-}

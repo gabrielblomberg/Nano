@@ -16,6 +16,8 @@ typedef struct {
 
 class Accelerometer
 {
+    const int s_magnitude_limit = 10000;
+
     public:
         Accelerometer();
         ~Accelerometer();
@@ -29,16 +31,12 @@ class Accelerometer
 
         // Returns the value after which enough acceleration can be deemed not
         // noise
-        inline int LowerLimit() { return m_magnitude_limit; }
-
-        // Tests the accelerometer and prints onto the Serial if avaliable
-        bool Test();
+        inline int LowerLimit() { return s_magnitude_limit; }
 
     private:
 
         MPU6050 m_mpu;
         int m_magnitude_offset;
-        int m_magnitude_limit;
 };
 
 #endif // ACCELEROMETER_H

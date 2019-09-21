@@ -38,9 +38,10 @@ void setup()
     });
     button->Bind(ButtonPattern::DoubleShort, [&](){
         for (int i = 0; i < 10; i++) {
-            display->TrainIncrement();
+            display->OddFlash();
             delay(100);
         }
+        display->SetAll(LOW);
     });
 
 }
@@ -56,7 +57,7 @@ void Standby()
         button->Evaluate();
         if (restart) return;
     }
-
+    display->SetAll(LOW);
 }
 
 void Flying()
@@ -64,7 +65,7 @@ void Flying()
     DEBUG_PRINTLN("Flying");
     bool maxed_accl = false; // max acceleration
     bool maxed_time = false; // Time before accepting change in acceleration
-    
+
     // While no peak in acceleration or withinn at least one second
     // since flying
     while ( (accelerometer->Magnitude() < accelerometer->LowerLimit()) ||
@@ -74,6 +75,7 @@ void Flying()
         transceiver->PushAcceleration(accelerometer->Query());
         button->Check();
         button->Evaluate();
+        display->FlashLast();
     }
 
 }

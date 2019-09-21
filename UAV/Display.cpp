@@ -31,6 +31,13 @@ void LED::Display::SetPin(pin p, int state)
     }
 }
 
+void LED::Display::SetAll(int state)
+{
+    for (int i = 0; i < m_pin_count; i++) {
+        digitalWrite(m_display_pins[i], (state ? HIGH : LOW));
+    }
+}
+
 void LED::Display::DisplayInt(int integer) const
 {
     // For the ith bit
@@ -41,6 +48,22 @@ void LED::Display::DisplayInt(int integer) const
         int state = (integer >> i) & 1 ? HIGH : LOW;
         // Set the corresponding pin to this state.
         digitalWrite(m_display_pins[i], state);
+    }
+}
+
+void LED::Display::FlashLast() const
+{
+    static const int iterations = 10;
+    static int count = iterations;
+    static bool state = false;
+
+    if (count == 0) {
+        digitalWrite(m_display_pins[m_pin_count - 1], (state ? HIGH : LOW) );
+        state = !state;
+        count = iterations;
+    }
+    else {
+        count--;
     }
 }
 
@@ -87,13 +110,14 @@ void LED::Display::TrainIncrement()
     }
 }
 
-void LED::Display::DebugFlash(int n, int ms) const
+void LED::Display::OddFlash()
 {
-    pin debug_pin = m_display_pins[m_pin_count - 1];
-    for (int i = 0; i < n; i++) {
-        digitalWrite(debug_pin, HIGH);
-        delay(ms);
-        digitalWrite(debug_pin, LOW);
-        delay(ms);
+    static bool display_odd_pins = false;
+    for (int i = 0; i < m_pin_count; i++) {
+        digitalWrite(m_display_pins[i], 
+            (i % 2 == (display_odd_pins ? 1 : 0)
+             ? HIGH : LOW)
+        );
     }
+    display_odd_pins = !display_odd_pins;
 }

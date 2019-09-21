@@ -16,8 +16,6 @@ class Transceiver
         // Transmits accelerational data to the base station
         void PushAcceleration(const AccelerationalData& data);
 
-        void Test();
-
         // Transmits the access code to the base station and returns whether it
         // was successful or not
         inline bool TransmitAccessCode() {
