@@ -2,65 +2,98 @@
 
 #include <Arduino.h>
 
-Display::Display()
+const int LED::DEFAULT_PIN_COUNT = 6;
+
+const pin LED::DEFAULT_PINS[LED::DEFAULT_PIN_COUNT] = {
+    LED::Pins::p0,
+    LED::Pins::p1,
+    LED::Pins::p2,
+    LED::Pins::p3,
+    LED::Pins::p4,
+    LED::Pins::p5,
+};
+
+LED::Display::Display(const pin *display_pins, const int len)
+    : m_display_pins(display_pins)
+    , m_pin_count(len)
 {
-    for (pin p : m_display_pins) {
-        pinMode(p, OUTPUT);
+    // Set all pins to output
+    for (int i = 0; i < m_pin_count; i++) {
+        pinMode(m_display_pins[i], OUTPUT);
     }
 }
 
-void Display::DisplayInt(int integer)
+
+void LED::Display::SetPin(pin p, int state)
 {
-    static bool forwards = true;
+    if ((-1 < p) && (p < m_pin_count)) {
+        digitalWrite(m_display_pins[p], state);
+    }
+}
+
+void LED::Display::DisplayInt(int integer) const
+{
+    // For the ith bit
+    for (int i = 0; i < m_pin_count; i++) {
+        //shift it to the front of the int and bitwise AND it with 0b00000001, 
+        // to remove trailing bits. This is the value encoded as an int of the
+        // bit at position i.
+        int state = (integer >> i) & 1 ? HIGH : LOW;
+        // Set the corresponding pin to this state.
+        digitalWrite(m_display_pins[i], state);
+    }
+}
+
+void LED::Display::TrainIncrement()
+{
+    // This state sets the first LED on, rather than starting from the second
+    // if pin_on - 0 and forwards = true;
+    static bool forwards = false;
+    static pin pin_on = 1;
 
     if (forwards) {
-        for (int i = 0; i < m_display_pin_count; i++) {
-            int state = (integer >> i) & 1 ? HIGH : LOW;
-            digitalWrite(m_display_pins[i], state);
+        // If the next pin is not out of range, turn the current LED off and the
+        // next one on.
+        if (pin_on + 1 < m_pin_count) {
+            digitalWrite(m_display_pins[pin_on], LOW);
+            pin_on++;
+            digitalWrite(m_display_pins[pin_on], HIGH);
         }
-    }
-    else {
-        for (int i = m_display_pin_count; i >= 0; i--) {
-            int state = (integer >> i) & 1 ? HIGH : LOW;
-            digitalWrite(m_display_pins[i], state);
-        }
-    }
+        // Otherwise set the direction to backwards
+        else {
+            // If there is a delay between function calls, last led will stay on
+            // twice as long when changing directions.
+            forwards = false;
 
+            // Run iteration of opposite direction to mitigate
+            digitalWrite(m_display_pins[pin_on], LOW);
+            pin_on--;
+            digitalWrite(m_display_pins[pin_on], HIGH);
+        }
+    }
+    else /* Backwards */ {
+        // Analogous to above comments
+        if (pin_on - 1 >= 0) {
+            digitalWrite(m_display_pins[pin_on], LOW);
+            pin_on--;
+            digitalWrite(m_display_pins[pin_on], HIGH);
+        }
+        else {
+            forwards = true;
+            digitalWrite(m_display_pins[pin_on], LOW);
+            pin_on++;
+            digitalWrite(m_display_pins[pin_on], HIGH);
+        }
+    }
 }
 
-void Display::Train()
+void LED::Display::DebugFlash(int n, int ms) const
 {
-    static int delay_ms = 50;
-
-    // Set the first LED to HIGH
-     digitalWrite(m_display_pins[0], HIGH);
-
-    // Set the next LED HIGH and the one before it LOW until last led is HIGH
-    for (int i = 1; i < m_display_pin_count; i++) {
-        digitalWrite(m_display_pins[i], HIGH);
-        digitalWrite(m_display_pins[i - 1], LOW);
-        delay(delay_ms);
-    }
-    
-    // Starting from the end, set the led before HIGH and the current LED to LOW
-    // until only the first LED is HIGH
-    for (int i = m_display_pin_count; i >= 1; i--) {
-        digitalWrite(m_display_pins[i - 1], HIGH);
-        digitalWrite(m_display_pins[i], LOW);
-        delay(delay_ms);
-    }
-
-    // Set the last LED to LOW
-    digitalWrite(m_display_pins[0], LOW);
-
-    DebugFlash(10, 50);
-}
-
-void Display::DebugFlash(int n, int ms) {
+    pin debug_pin = m_display_pins[m_pin_count - 1];
     for (int i = 0; i < n; i++) {
-        digitalWrite(m_debug_pin, HIGH);
+        digitalWrite(debug_pin, HIGH);
         delay(ms);
-        digitalWrite(m_debug_pin, LOW);
+        digitalWrite(debug_pin, LOW);
         delay(ms);
     }
 }

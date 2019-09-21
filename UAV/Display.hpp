@@ -1,47 +1,54 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
-#include "defs.hpp"
+typedef unsigned char pin;
 
-// Pin definitions
-#define LED_P0 2
-#define LED_P1 3
-#define LED_P2 4
-#define LED_P3 5
-#define LED_P4 6
-#define LED_P5 7
+namespace LED {
 
-class Display
-{
-    private:
+    // Related but non-class variables should be put in the same namespace
+    enum Pins {
+        p0 = 2,
+        p1 = 3,
+        p2 = 4,
+        p3 = 5,
+        p4 = 6,
+        p5 = 7
+    };
 
-        static const int m_display_pin_count = 5;
+    extern const int DEFAULT_PIN_COUNT;
+    extern const pin DEFAULT_PINS[];
 
-        // Array of pins connected to each LED, in order
-        int m_display_pins[m_display_pin_count] = {
-            LED_P0,
-            LED_P1,
-            LED_P2,
-            LED_P3,
-            LED_P4
-        };
+    // Class for displaying patterns on the FDR LEDs. Assumes the LED pins are in
+    // sequence. Default pins descrived in the LedPin enumeration above.
+    class Display
+    {
+        public:
 
-        int m_debug_pin = LED_P5;
+            Display(
+                const pin *display_pins = DEFAULT_PINS,
+                const int len = DEFAULT_PIN_COUNT
+            );
 
-    public:
+            // Set a given pin to HIGH or LOW
+            void SetPin(pin p, int state);
 
-        Display();
+            // Displays an integer in binary format on the 5 display pins (excluding
+            // the debug pin)
+            void DisplayInt(int integer) const;
 
-        // Displays a given integer on the first 5 LEDs
-        void DisplayInt(int integer);
+            // Flashes the last LED n times with milliseconds ms delay
+            void DebugFlash(int n, int ms) const;
 
-        // Flashes the LEDs in sequence
-        void Train();
+            // Upon multiple calls, causes a light to bounce back and forth on the 
+            // display pins. Maintains data on current pin turned on.
+            void TrainIncrement();
 
-        // Flashes the 6th led n times, with ms millisecond delay between each
-        // flash
-        void DebugFlash(int n, int ms);
-    
-};
+        private:
+            const pin *m_display_pins;
+            const int m_pin_count;
+
+    };
+
+}
 
 #endif // DISPLAY_H
