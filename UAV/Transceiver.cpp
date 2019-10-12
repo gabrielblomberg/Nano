@@ -1,15 +1,13 @@
 #include "Transceiver.hpp"
 
-#include <Arduino.h>
-
 #include "Debug.hpp"
-#include "Accelerometer.hpp"
 
 Transceiver::Transceiver()
     : m_rf(RF24(9, 10))
-    , m_tx_pipe_addr("1Node")
-    , m_rx_pipe_addr("2Node")
-    , m_rx_pipe_number(1)
+    , m_tx_pipe_addr(DEFAULT_TX_PIPE_ADDR)
+    , m_rx_pipe_addr(DEFAULT_TX_PIPE_ADDR)
+    , m_rx_pipe_number(DEFAULT_RX_PIPE_NUMBER)
+    , m_access_code(DEFAULT_ACCESS_CODE)
 {
     // Assume runs correctly given there is little error checking from the
     // provided library
@@ -20,6 +18,8 @@ Transceiver::Transceiver()
 
 void Transceiver::PushAcceleration(const AccelerationalData& data)
 {
+    // According to the documentation, blocks until ACKed or until timeout
+    // is reached, that is 60-70 ms. Chokepoint if no base station present.
     if (!m_rf.write(&data, sizeof(data))) {
         DEBUG_PRINT("Accelerational data was not transmitted\n");
         DEBUG_PRINT("X Acceleration: "); DEBUG_PRINTLN(data.ax);

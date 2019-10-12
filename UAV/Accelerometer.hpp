@@ -1,6 +1,7 @@
 #ifndef ACCELEROMETER_H
 #define ACCELEROMETER_H
 
+// Reference: https://github.com/ElectronicCats/mpu6050
 #include <MPU6050.h>
 
 // Accerational data
@@ -16,7 +17,8 @@ typedef struct {
 
 class Accelerometer
 {
-    const int s_magnitude_limit = 10000;
+    // Selected experimentally
+    static const int s_magnitude_limit = 10000;
 
     public:
         Accelerometer();
@@ -30,7 +32,7 @@ class Accelerometer
         int Magnitude();
 
         // Returns the value after which enough acceleration can be deemed not
-        // noise
+        // due to noise
         inline int LowerLimit() { return s_magnitude_limit; }
 
     private:

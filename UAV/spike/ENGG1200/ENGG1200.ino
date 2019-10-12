@@ -7,7 +7,7 @@
 
 /*
  * This code is written by ENGG1200 course staff. Any issues with this code, including any overlooked bugs
- * or inconsistencies, please email uqjmacd9@uq.edu.au and an update will be released as soon as possible.  
+ * or inconsistencies, please email and an update will be released as soon as possible.  
  * As with any software, there may be bugs; welcome to software engineering! :)
  */
 

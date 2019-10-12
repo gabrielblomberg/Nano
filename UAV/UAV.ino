@@ -6,8 +6,6 @@
 #include "Transceiver.hpp"
 #include "Button.hpp"
 
-using namespace LED;
-
 Accelerometer *accelerometer = nullptr;
 Transceiver *transceiver = nullptr;
 Display *display = nullptr;
@@ -19,6 +17,8 @@ unsigned long flight_end;
 
 void setup()
 {
+    // Initalises the serial connection and debug macros depending on whether
+    // debugging is enabled in Debug.hpp
     InitDebugging();
 
     // Heap allocation because *Arduino* oOoOOoO
@@ -28,15 +28,16 @@ void setup()
     transceiver = new Transceiver();
     button = new Button();
 
-    // Button bindings to lambda functions. These should be as fast as possible
-    // so as not to hold up processing.
-    button->Bind(ButtonPattern::SingleShort, [&](){
+    // Bind each button press type to it's corresponding action in the lambda
+    // function. These should be as fast as possible so as not to hold up
+    // processing.
+    button->Bind(ButtonPattern::SingleShort, [](){
         transceiver->TransmitAccessCode();
     });
-    button->Bind(ButtonPattern::SingleLong, [&](){
+    button->Bind(ButtonPattern::SingleLong, [](){
         restart = true;
     });
-    button->Bind(ButtonPattern::DoubleShort, [&](){
+    button->Bind(ButtonPattern::DoubleShort, [](){
         for (int i = 0; i < 10; i++) {
             display->OddFlash();
             delay(100);
@@ -62,29 +63,32 @@ void Standby()
 
 void Flying()
 {
+    // Experimentally, Magnitude() takes 0-2 ms to execute so no choke point
+    // calling twice in the following loop.
     DEBUG_PRINTLN("Flying");
-    bool maxed_accl = false; // max acceleration
-    bool maxed_time = false; // Time before accepting change in acceleration
 
-    // While no peak in acceleration or withinn at least one second
-    // since flying
+    // While no peak in acceleration or within at least one second
+    // since flying, transmit the acceleration and check button state.
     while ( (accelerometer->Magnitude() < accelerometer->LowerLimit()) ||
             (millis() - flight_begin < 1000) )
     {
         if (restart) return;
+
+        // According to the documentation, blocks until ACKed or until timeout
+        // is reached, that is 60-70 ms. Choke point if no base station present.
         transceiver->PushAcceleration(accelerometer->Query());
         button->Check();
         button->Evaluate();
-        display->FlashLast();
     }
 
 }
 
+// Displays the flight duration in binary
 void Landed(int duration)
 {
     DEBUG_PRINTLN("Landed. Duration: "); DEBUG_PRINT(duration);
     while (!restart) {
-        display->DisplayInt(duration); // Incase TrainIncrement is called
+        display->DisplayInt(duration);
         button->Check();
         button->Evaluate();
     }

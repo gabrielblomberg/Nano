@@ -28,7 +28,7 @@ class Button
 {
     static const pin s_default_button_pin = A0;
 
-    // Response times for different button patterns
+    // Response times for different button patterns in milliseconds
     static const unsigned long s_SHORT_RESPONSE = 500;
     static const unsigned long s_MEDIUM_RESPONSE = 1000;
     static const unsigned long s_LONG_RESPOSNE = 1500;

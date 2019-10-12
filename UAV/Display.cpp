@@ -2,18 +2,18 @@
 
 #include <Arduino.h>
 
-const int LED::DEFAULT_PIN_COUNT = 6;
+const int LED_DEFAULT_PIN_COUNT = 6;
 
-const pin LED::DEFAULT_PINS[LED::DEFAULT_PIN_COUNT] = {
-    LED::Pins::p0,
-    LED::Pins::p1,
-    LED::Pins::p2,
-    LED::Pins::p3,
-    LED::Pins::p4,
-    LED::Pins::p5,
+const pin LED_DEFAULT_PINS[LED_DEFAULT_PIN_COUNT] = {
+    LEDPins::p0,
+    LEDPins::p1,
+    LEDPins::p2,
+    LEDPins::p3,
+    LEDPins::p4,
+    LEDPins::p5,
 };
 
-LED::Display::Display(const pin *display_pins, const int len)
+Display::Display(const pin *display_pins, const int len)
     : m_display_pins(display_pins)
     , m_pin_count(len)
 {
@@ -24,21 +24,21 @@ LED::Display::Display(const pin *display_pins, const int len)
 }
 
 
-void LED::Display::SetPin(pin p, int state)
+void Display::SetPin(pin p, int state) const
 {
     if ((-1 < p) && (p < m_pin_count)) {
         digitalWrite(m_display_pins[p], state);
     }
 }
 
-void LED::Display::SetAll(int state)
+void Display::SetAll(int state) const
 {
     for (int i = 0; i < m_pin_count; i++) {
         digitalWrite(m_display_pins[i], (state ? HIGH : LOW));
     }
 }
 
-void LED::Display::DisplayInt(int integer) const
+void Display::DisplayInt(int integer) const
 {
     // For the ith bit
     for (int i = 0; i < m_pin_count; i++) {
@@ -51,7 +51,7 @@ void LED::Display::DisplayInt(int integer) const
     }
 }
 
-void LED::Display::FlashLast() const
+void Display::FlashLast() const
 {
     static const int iterations = 10;
     static int count = iterations;
@@ -67,7 +67,7 @@ void LED::Display::FlashLast() const
     }
 }
 
-void LED::Display::TrainIncrement()
+void Display::TrainIncrement() const
 {
     // This state sets the first LED on, rather than starting from the second
     // if pin_on - 0 and forwards = true;
@@ -110,7 +110,7 @@ void LED::Display::TrainIncrement()
     }
 }
 
-void LED::Display::OddFlash()
+void Display::OddFlash() const
 {
     static bool display_odd_pins = false;
     for (int i = 0; i < m_pin_count; i++) {
