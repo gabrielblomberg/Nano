@@ -44,6 +44,14 @@ void setup()
         }
         display->SetAll(LOW);
     });
+    button->Bind(ButtonPattern::DoubleLong, [](){
+        for (int i = 0; i < 10; i++) {
+            display->SetAll(HIGH);
+            delay(50);
+            display->SetAll(LOW);
+            delay(50);
+        }
+    });
 
 }
 

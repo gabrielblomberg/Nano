@@ -68,48 +68,60 @@ void Button::Check()
 
 void Button::Evaluate()
 {
+    unsigned long first_duration, second_duration;
+    bool timed_out;
+
     if (m_first_press == 0) {
         return; // No command
     }
     else if (m_first_release == 0) {
         return; // First press being held down
     }
-    // First press has occured. Calculate duration
-    unsigned long first_duration = m_first_release - m_first_press;
-    
-    // If timedout and only first button pressed
-    if ((millis() - m_first_press > s_EVAULATION_SEPERATION) && (m_second_press == 0)) { // Timed Out
-        // Must be a single press
-        ResetTimes();
-        if (first_duration < s_SHORT_RESPONSE) { // It was a short Press
-            m_single_short_binding();
-            return;
-        }
-        else if (first_duration < s_MEDIUM_RESPONSE) { // It was a medium press
-            m_single_medium_binding();
-            return;
-        }
-        else { // It was a long press
-            m_single_long_binding();
-            return;
+
+    timed_out = millis() - m_first_release > s_PRESS_SEPERATION;
+
+    // If timed out and only first button pressed
+    if (timed_out) {
+        if (m_second_press == 0) {
+
+            // Must be a single press
+            first_duration = m_first_release - m_first_press;
+            ResetTimes();
+
+            if (first_duration < s_SHORT_RESPONSE) { // It was a short Press
+                m_single_short_binding();
+                return;
+            }
+            else if (first_duration < s_MEDIUM_RESPONSE) { // It was a medium press
+                m_single_medium_binding();
+                return;
+            }
+            else { // It was a long press
+                m_single_long_binding();
+                return;
+            }
         }
     }
-    // Else if the second press
-    else if ((m_second_press > 0) && (m_second_release > 0)) {
 
-        // Second press has occured, calculate second duration
-        unsigned long second_duration = m_second_release - m_second_press;
+    // If a second press has occured
+    if (m_second_press > 0) {
+        if (m_second_release > 0) {
 
-        ResetTimes();
-        if (first_duration < s_SHORT_RESPONSE) { // It was a short double press
-            m_double_short_binding();
-            return;
-        }
-        else { // It was a long double press
-            m_double_long_binding();
+            // Calculate second duration
+            first_duration = m_first_release - m_first_press;
+            second_duration = m_second_release - m_second_press;
+            ResetTimes();
+
+            if (first_duration < s_SHORT_RESPONSE) { // It was a short double press
+                m_double_short_binding();
+                return;
+            }
+            else { // It was a long double press
+                m_double_long_binding();
+            }
         }
     }
-    
+
 }
 
 void Button::ResetTimes()

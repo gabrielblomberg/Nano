@@ -3,7 +3,7 @@
 #include "Debug.hpp"
 
 Transceiver::Transceiver()
-    : m_rf(RF24(9, 10))
+    : m_rf(RF24(DEFAULT_CHIP_ENABLE_PIN, DEFAULT_CHIP_SELECT_PIN))
     , m_tx_pipe_addr(DEFAULT_TX_PIPE_ADDR)
     , m_rx_pipe_addr(DEFAULT_TX_PIPE_ADDR)
     , m_rx_pipe_number(DEFAULT_RX_PIPE_NUMBER)

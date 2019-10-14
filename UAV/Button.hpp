@@ -34,7 +34,7 @@ class Button
     static const unsigned long s_LONG_RESPOSNE = 1500;
 
     // Minimum time between evaulations
-    static const unsigned long s_EVAULATION_SEPERATION = 500;
+    static const unsigned long s_PRESS_SEPERATION = 300;
 
     public:
 

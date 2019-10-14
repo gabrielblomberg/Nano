@@ -10,6 +10,8 @@
 #define DEFAULT_RX_PIPE_ADDR "2Node"
 #define DEFAULT_RX_PIPE_NUMBER 1
 #define DEFAULT_ACCESS_CODE "P03 Nano"
+#define DEFAULT_CHIP_ENABLE_PIN 9
+#define DEFAULT_CHIP_SELECT_PIN 10
 
 // Class for the transceiver used for ENGG1200 2019. Under normal circumstances
 // there would be less constants however this class is designed for interfacting
@@ -52,6 +54,5 @@ class Transceiver
         // Underlying transceiver class instance
         RF24 m_rf;
 };
-
 
 #endif // TRANSCEIVER_H
