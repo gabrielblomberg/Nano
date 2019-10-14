@@ -35,6 +35,7 @@ void setup()
         transceiver->TransmitAccessCode();
     });
     button->Bind(ButtonPattern::SingleLong, [](){
+        display->SetAll(LOW);
         restart = true;
     });
     button->Bind(ButtonPattern::DoubleShort, [](){
