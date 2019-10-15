@@ -6,14 +6,26 @@ Transceiver::Transceiver()
     : m_rf(RF24(DEFAULT_CHIP_ENABLE_PIN, DEFAULT_CHIP_SELECT_PIN))
     , m_tx_pipe_addr(DEFAULT_TX_PIPE_ADDR)
     , m_rx_pipe_addr(DEFAULT_TX_PIPE_ADDR)
-    , m_rx_pipe_number(DEFAULT_RX_PIPE_NUMBER)
+    , m_rx_pipe_number(DEFAULT_RX_PIPE_NUMBER) // 0 - 5 inclusive
     , m_access_code(DEFAULT_ACCESS_CODE)
 {
-    // Assume runs correctly given there is little error checking from the
-    // provided library
     m_rf.begin();
+    if (!m_rf.isChipConnected()) {
+        DEBUG_PRINTLN("Transceiver connection failed.");
+    }
+    else {
+        DEBUG_PRINTLN("Transceiver connected!");
+    }
+
     m_rf.openWritingPipe(m_tx_pipe_addr);
     m_rf.openReadingPipe(m_rx_pipe_number, m_rx_pipe_addr);
+
+    DEBUG_PRINT("TX Address: ");
+    for (unsigned char x : m_tx_pipe_addr) {DEBUG_PRINT(char(x));}
+    DEBUG_PRINTLN();
+    DEBUG_PRINT("RX Address: ");
+    for (unsigned char x : m_rx_pipe_addr) {DEBUG_PRINT(char(x));}
+    DEBUG_PRINTLN();
 }
 
 void Transceiver::PushAcceleration(const AccelerationalData& data)

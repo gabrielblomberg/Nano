@@ -17,6 +17,11 @@ unsigned long flight_end;
 
 void setup()
 {
+    // Ensure values are initialised correctly
+    restart = false;
+    flight_begin = 0;
+    flight_end = 0;
+
     // Initalises the serial connection and debug macros depending on whether
     // debugging is enabled in Debug.hpp
     InitDebugging();
@@ -46,11 +51,12 @@ void setup()
         display->SetAll(LOW);
     });
     button->Bind(ButtonPattern::DoubleLong, [](){
-        for (int i = 0; i < 10; i++) {
+        accelerometer->Calibrate();
+        for (int i = 0; i < 3; i++) {
             display->SetAll(HIGH);
-            delay(50);
+            delay(200);
             display->SetAll(LOW);
-            delay(50);
+            delay(200);
         }
     });
 
@@ -58,7 +64,7 @@ void setup()
 
 void Standby()
 {
-    DEBUG_PRINTLN("Standby");
+    DEBUG_PRINTLN("Standing by!");
     while (accelerometer->Magnitude() < accelerometer->LowerLimit())
     {
         display->TrainIncrement();
@@ -74,20 +80,20 @@ void Flying()
 {
     // Experimentally, Magnitude() takes 0-2 ms to execute so no choke point
     // calling twice in the following loop.
-    DEBUG_PRINTLN("Flying");
+    DEBUG_PRINTLN("Flying!");
 
     // While no peak in acceleration or within at least one second
     // since flying, transmit the acceleration and check button state.
     while ( (accelerometer->Magnitude() < accelerometer->LowerLimit()) ||
             (millis() - flight_begin < 1000) )
     {
-        if (restart) return;
-
         // According to the documentation, blocks until ACKed or until timeout
         // is reached, that is 60-70 ms. Choke point if no base station present.
         transceiver->PushAcceleration(accelerometer->Query());
         button->Check();
         button->Evaluate();
+        
+        if (restart) return;
     }
 
 }
@@ -95,7 +101,7 @@ void Flying()
 // Displays the flight duration in binary
 void Landed(int duration)
 {
-    DEBUG_PRINTLN("Landed. Duration: "); DEBUG_PRINT(duration);
+    DEBUG_PRINTLN("Landed! Duration: "); DEBUG_PRINT(duration);
     while (!restart) {
         display->DisplayInt(duration);
         button->Check();

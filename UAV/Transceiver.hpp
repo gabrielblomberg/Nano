@@ -6,16 +6,14 @@
 // Reference: https://github.com/nRF24/RF24
 #include <RF24.h>
 
-#define DEFAULT_TX_PIPE_ADDR "1Node"
-#define DEFAULT_RX_PIPE_ADDR "2Node"
+#define DEFAULT_TX_PIPE_ADDR "P03Nano1"
+#define DEFAULT_RX_PIPE_ADDR "P03Nano2"
 #define DEFAULT_RX_PIPE_NUMBER 1
 #define DEFAULT_ACCESS_CODE "P03 Nano"
 #define DEFAULT_CHIP_ENABLE_PIN 9
 #define DEFAULT_CHIP_SELECT_PIN 10
 
-// Class for the transceiver used for ENGG1200 2019. Under normal circumstances
-// there would be less constants however this class is designed for interfacting
-// wit the provided base station
+// Class for transceiver that interfaces with the base station
 class Transceiver
 {
     public:
@@ -38,17 +36,15 @@ class Transceiver
 
     private:
 
-        // Pipe address length is 5 bytes. Rx pipes 1 - 5 have addresses
-        // differing only by the first byte, and pipe 0 may have any 5 byte
-        // address. The Tx pipe address is 5 bytes long and is the node address
-        // of the receiver.
-        const unsigned char m_tx_pipe_addr[6];
-        const unsigned char m_rx_pipe_addr[6];
+        // Pipe address length is 5 bytes. There are 5 pipes. Rx pipes 1 - 5
+        // have addresses differing only by the first byte, and pipe 0 may have
+        // any 5 byte address. The Tx pipe address is 5 bytes long and is the
+        // node address of the receiver.
+        const unsigned char m_tx_pipe_addr[5];
+        const unsigned char m_rx_pipe_addr[5];
         int m_rx_pipe_number;
 
-        // Access code for the base station - implemented in provided code this
-        // way. Ever tried initialising a class member char array In Arduino C?
-        // No, just no.
+        // Access code for the base station - expects 20 characters
         const char m_access_code[20];
 
         // Underlying transceiver class instance

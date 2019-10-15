@@ -12,6 +12,7 @@ Button::Button(pin p)
     , m_double_short_binding(&DummyCallback)
     , m_double_long_binding(&DummyCallback) 
 {
+    ResetTimes();
 }
 
 void Button::Bind(ButtonPattern pattern, void (*func)(void) )
@@ -118,6 +119,7 @@ void Button::Evaluate()
             }
             else { // It was a long double press
                 m_double_long_binding();
+                return;
             }
         }
     }
