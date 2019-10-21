@@ -18,12 +18,7 @@ class Transceiver
 {
     public:
 
-        // This is non-ideal. There should be arguments with default
-        // parameters here, however passing in a char array as a pointer
-        // that must be a strict size to a class constructor without
-        // std::string is hard and convuluted
         Transceiver();
-        ~Transceiver();
 
         // Transmits accelerational data to the base station
         void PushAcceleration(const AccelerationalData& data);
@@ -40,9 +35,7 @@ class Transceiver
         // have addresses differing only by the first byte, and pipe 0 may have
         // any 5 byte address. The Tx pipe address is 5 bytes long and is the
         // node address of the receiver.
-        const unsigned char m_tx_pipe_addr[5];
-        const unsigned char m_rx_pipe_addr[5];
-        int m_rx_pipe_number;
+        unsigned char m_addresses[2][9];
 
         // Access code for the base station - expects 20 characters
         const char m_access_code[20];

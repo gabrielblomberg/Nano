@@ -3,13 +3,12 @@
 #include "Debug.hpp"
 
 Transceiver::Transceiver()
-    : m_rf(RF24(DEFAULT_CHIP_ENABLE_PIN, DEFAULT_CHIP_SELECT_PIN))
-    , m_tx_pipe_addr(DEFAULT_TX_PIPE_ADDR)
-    , m_rx_pipe_addr(DEFAULT_TX_PIPE_ADDR)
-    , m_rx_pipe_number(DEFAULT_RX_PIPE_NUMBER) // 0 - 5 inclusive
-    , m_access_code(DEFAULT_ACCESS_CODE)
+    : m_addresses{DEFAULT_TX_PIPE_ADDR, DEFAULT_RX_PIPE_ADDR}
+    , m_access_code( DEFAULT_ACCESS_CODE )
+    , m_rf( RF24(DEFAULT_CHIP_ENABLE_PIN, DEFAULT_CHIP_SELECT_PIN) )
 {
     m_rf.begin();
+    
     if (!m_rf.isChipConnected()) {
         DEBUG_PRINTLN("Transceiver connection failed.");
     }
@@ -17,14 +16,15 @@ Transceiver::Transceiver()
         DEBUG_PRINTLN("Transceiver connected!");
     }
 
-    m_rf.openWritingPipe(m_tx_pipe_addr);
-    m_rf.openReadingPipe(m_rx_pipe_number, m_rx_pipe_addr);
+    // Open the reading and writing pipes
+    m_rf.openWritingPipe(m_addresses[1]);
+    m_rf.openReadingPipe(DEFAULT_RX_PIPE_NUMBER, m_addresses[0]);
 
     DEBUG_PRINT("TX Address: ");
-    for (unsigned char x : m_tx_pipe_addr) {DEBUG_PRINT(char(x));}
+    for (unsigned char x : m_addresses[1]) {DEBUG_PRINT(char(x));}
     DEBUG_PRINTLN();
     DEBUG_PRINT("RX Address: ");
-    for (unsigned char x : m_rx_pipe_addr) {DEBUG_PRINT(char(x));}
+    for (unsigned char x : m_addresses[2]) {DEBUG_PRINT(char(x));}
     DEBUG_PRINTLN();
 }
 

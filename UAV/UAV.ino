@@ -1,6 +1,9 @@
 #include <Arduino.h>
 
 #include "Debug.hpp"
+#include <Arduino.h>
+
+#include "Debug.hpp"
 #include "Display.hpp"
 #include "Accelerometer.hpp"
 #include "Transceiver.hpp"
