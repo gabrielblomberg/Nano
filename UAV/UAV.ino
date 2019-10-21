@@ -1,6 +1,5 @@
 #include <Arduino.h>
 
-#include "Debug.hpp"
 #include <Arduino.h>
 
 #include "Debug.hpp"
