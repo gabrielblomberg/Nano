@@ -6,4 +6,4 @@ Arduino C source code for the UAV Flight Data Recorder (FDR) as part of the ENGG
 ![FDR](https://raw.githubusercontent.com/Gabrblal/Nano/master/Wiki/FDR.jpg)
 
 ## FDR mounted in the prototype UAV:
-![FDR](https://raw.githubusercontent.com/Gabrblal/Nano/master/Wiki/MOunted.jpg)
+![FDR](https://raw.githubusercontent.com/Gabrblal/Nano/master/Wiki/Mounted.jpg)
