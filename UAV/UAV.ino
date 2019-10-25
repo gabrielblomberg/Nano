@@ -1,7 +1,5 @@
 #include <Arduino.h>
 
-#include <Arduino.h>
-
 #include "Debug.hpp"
 #include "Display.hpp"
 #include "Accelerometer.hpp"
